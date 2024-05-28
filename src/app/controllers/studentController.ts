@@ -200,7 +200,7 @@ class StudentController {
         const resetToken = SignToken.generateResetToken();
         await student.update({
             resetToken,
-            resetTokenExpiry: Date.now() + 900000
+            resetTokenExpire: Date.now() + 900000
         })
 
         // 3. Send the link to reset the password to user's email
@@ -224,7 +224,7 @@ class StudentController {
         } catch (error: any) {
             console.log(error.message);
             student.resetToken = undefined;
-            student.resetTokenExpiry = undefined;
+            student.resetTokenExpire = undefined;
         }
     }
 
@@ -233,7 +233,7 @@ class StudentController {
             const student = Student.findOne({
                 where: {
                     resetToken: req.params.resetToken,
-                    resetTokenExpiry: { $gt: Date.now() }
+                    resetTokenExpire: { $gt: Date.now() }
                 }
             });
     
@@ -241,7 +241,7 @@ class StudentController {
     
             student.password = await bcrypt.hash(req.body.password, 12);
             student.resetToken = undefined;
-            student.resetTokenExpiry = undefined;
+            student.resetTokenExpire = undefined;
     
             const accessToken = SignToken.signAccessToken(student.id);
             const refreshToken = SignToken.signRefreshToken(student.id);

@@ -51,6 +51,12 @@ Student.init(
       allowNull: false,
       defaultValue: true,
     },
+    resetToken: {
+      type: DataTypes.STRING
+    },
+    resetTokenExpire: {
+      type: DataTypes.DATE
+    },
     createdAt: {
       type: DataTypes.TIME,
       allowNull: false,

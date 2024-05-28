@@ -76,6 +76,12 @@ Teacher.init(
     // bank_account: {
     //   type: DataTypes.STRING
     // },
+    resetToken: {
+      type: DataTypes.STRING
+    },
+    resetTokenExpire: {
+      type: DataTypes.DATE
+    },
     createdAt: {
       type: DataTypes.TIME,
       allowNull: false,
