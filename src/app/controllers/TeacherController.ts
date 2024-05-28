@@ -197,7 +197,13 @@ class TeacherController {
 
       if (!teacher) return res.status(404).json({ message: "Teacher not found!" });
 
-      const courseServiceInformation = await axios.get(`${process.env.BASE_URL_COURSE_LOCAL}/informations/teacher/${id_teacher}`);
+      const headers = {
+        'Authorization': req.headers.authorization
+      };
+
+      const courseServiceInformation = await axios.get(`${process.env.BASE_URL_COURSE_LOCAL}/informations/teacher/${id_teacher}`, {
+        headers
+      });
       const examServiceInformation = await axios.get(`${process.env.BASE_URL_EXAM_LOCAL}/informations/teacher/${id_teacher}`);
 
       const response = {
