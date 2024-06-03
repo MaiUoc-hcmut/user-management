@@ -235,21 +235,39 @@ class TeacherController {
   }
 
   updateTeacher = async (req: Request, res: Response, _next: NextFunction) => {
+    const t = await sequelize.transaction();
     try {
-      const teacher = Teacher.findOne({
-        where: {
-          id: req.body.id
-        }
-      })
-      if (!teacher) return res.status(404).send({ error: "Teacher not found!" });
+      const body = req.body.data;
+      
+      const { categories, ...teacherBody } = body;
 
-      await teacher.update(req.body);
-      res.status(200).send({
-        updated: true,
+      const teacher = await Teacher.findByPk(req.params.teacherId);
+
+      const categoryInstances: any[] = [];
+      for (const categoryId of categories) {
+        const category = await Category.findByPk(categoryId);
+        categoryInstances.push(category);
+      }
+
+      await teacher.setCategories(categoryInstances, { transaction: t });
+      await teacher.update({
+        ...teacherBody
+      }, {
+        transaction: t
+      });
+
+      await t.commit();
+
+      res.status(200).json({
         teacher
       });
     } catch (error: any) {
       console.log(error.message);
+      await t.rollback();
+      res.status(500).json({
+        error,
+        message: error.message
+      });
     }
   }
 

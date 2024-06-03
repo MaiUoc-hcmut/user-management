@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const TeacherController = require('../controllers/TeacherController');
+const CheckingTeacher = require('../middleware/teacher');
 const Authorize = require('../middleware/teacherAuth');
 const Photo = require('../../config/firebase/photo');
 
@@ -28,6 +29,13 @@ router.route('/reset-password/:resetToken')
 
 router.route('/upload-avatar/:teacherId')
     .post(Authorize.protectedAPI, Photo.upload, TeacherController.uploadAvatar);
+
+router.route('/update/:teacherId')
+    .put(
+        Authorize.protectedAPI,
+        CheckingTeacher.checkUpdateTeacher,
+        TeacherController.updateTeacher
+    )
 
 module.exports = router;
 

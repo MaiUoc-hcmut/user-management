@@ -14,6 +14,8 @@ const transporter = require('../../utils/sendEmail');
 import { Request, Response, NextFunction } from 'express';
 import { Op } from 'sequelize';
 
+const { sequelize } = require('../../config/db/index');
+
 initializeApp(firebaseConfig);
 const storage = getStorage();
 
@@ -95,6 +97,7 @@ class StudentController {
     }
 
     updateStudent = async (req: Request, res: Response, _next: NextFunction) => {
+        const t = await sequelize.transaction();
         try {
             const studentId = req.params.studentId;
 
@@ -105,13 +108,23 @@ class StudentController {
                 where: { id: studentId }
             });
 
-            await student.update(req.body);
+            await student.update({
+                ...req.body.data
+            }, {
+                transaction: t
+            });
+            await t.commit();
             res.status(200).send({
                 updated: true,
                 student
             });
         } catch (error: any) {
+            await t.rollback()
             console.log(error.message);
+            res.status(500).json({
+                error,
+                message: error.message
+            });
         }
     }
 
