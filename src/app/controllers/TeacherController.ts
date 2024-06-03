@@ -193,7 +193,7 @@ class TeacherController {
 
       for (const category of teacher.Categories) {
         const parCategory = await ParentCategory.findByPk(category.id_par_category);
-        teacher.dataValues[`${parCategory.name}`] = category.name;
+        teacher.dataValues[`${parCategory.name}`] = category.id;
       }
       delete teacher.dataValues.Categories;
 
