@@ -14,6 +14,11 @@ router.route('/:studentId')
     .put(Authorize.protectedAPI, StudentController.updateStudent);
 router.route('/reset-password/:resetToken').put(StudentController.resetPassword);
 router.route('/upload-avatar/:studentId').post(Authorize.protectedAPI, Photo.upload, StudentController.uploadAvatar);
+router.route('/update/:studentId')
+    .put(
+        Authorize.protectedAPI,
+        StudentController.updateStudent
+    );
 
 module.exports = router;
 
