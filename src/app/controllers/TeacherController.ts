@@ -179,9 +179,23 @@ class TeacherController {
   getTeacherById = async (req: Request, res: Response, _next: NextFunction) => {
     try {
       const id_teacher = req.params.teacherId;
-      const teacher = await Teacher.findByPk(id_teacher);
+      const teacher = await Teacher.findByPk(id_teacher, {
+        include: [{
+          model: Category,
+          attributes: ['id', 'id_par_category', 'name'],
+          through: {
+            attributes: []
+          }
+        }]
+      });
 
       if (!teacher) return res.status(404).json({ message: "Teacher not found!" });
+
+      for (const category of teacher.Categories) {
+        const parCategory = await ParentCategory.findByPk(category.id_par_category);
+        teacher.dataValues[`${parCategory.name}`] = category.name;
+      }
+      delete teacher.dataValues.Categories;
 
       res.status(200).json(teacher);
     } catch (error: any) {
